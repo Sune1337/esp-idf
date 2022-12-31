@@ -93,7 +93,7 @@ static void emac_opencores_rx_task(void *arg)
                 } else if (emac_opencores_receive(&emac->parent, buffer, &length) == ESP_OK) {
                     // pass the buffer to the upper layer
                     if (length) {
-                        emac->eth->stack_input(emac->eth, buffer, length);
+                        emac->eth->stack_input(emac->eth, buffer, length, 0);
                     } else {
                         free(buffer);
                     }
@@ -233,7 +233,7 @@ static esp_err_t emac_opencores_set_peer_pause_ability(esp_eth_mac_t *mac, uint3
     return ESP_OK;
 }
 
-static esp_err_t emac_opencores_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length)
+static esp_err_t emac_opencores_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     esp_err_t ret = ESP_OK;
     emac_opencores_t *emac = __containerof(mac, emac_opencores_t, parent);

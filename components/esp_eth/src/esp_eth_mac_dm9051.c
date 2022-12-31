@@ -408,7 +408,7 @@ static void emac_dm9051_task(void *arg)
                 } else if (emac->parent.receive(&emac->parent, buffer, &length) == ESP_OK) {
                     /* pass the buffer to stack (e.g. TCP/IP layer) */
                     if (length) {
-                        emac->eth->stack_input(emac->eth, buffer, length);
+                        emac->eth->stack_input(emac->eth, buffer, length, 0);
                     } else {
                         free(buffer);
                     }
@@ -621,7 +621,7 @@ static esp_err_t emac_dm9051_set_peer_pause_ability(esp_eth_mac_t *mac, uint32_t
     return ESP_OK;
 }
 
-static esp_err_t emac_dm9051_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length)
+static esp_err_t emac_dm9051_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     esp_err_t ret = ESP_OK;
     emac_dm9051_t *emac = __containerof(mac, emac_dm9051_t, parent);

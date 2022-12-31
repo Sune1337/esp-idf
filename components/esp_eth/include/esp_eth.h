@@ -62,7 +62,7 @@ typedef struct {
     *      - ESP_FAIL: error occurred when inputting buffer to upper stack
     *
     */
-    esp_err_t (*stack_input)(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv);
+    esp_err_t (*stack_input)(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv, int64_t timestamp);
 
     /**
     * @brief Callback function invoked when lowlevel initialization is finished
@@ -220,7 +220,7 @@ esp_err_t esp_eth_stop(esp_eth_handle_t hdl);
 */
 esp_err_t esp_eth_update_input_path(
     esp_eth_handle_t hdl,
-    esp_err_t (*stack_input)(esp_eth_handle_t hdl, uint8_t *buffer, uint32_t length, void *priv),
+    esp_err_t (*stack_input)(esp_eth_handle_t hdl, uint8_t *buffer, uint32_t length, void *priv, int64_t timestamp),
     void *priv);
 
 /**
@@ -235,7 +235,7 @@ esp_err_t esp_eth_update_input_path(
 *       - ESP_ERR_INVALID_ARG: transmit frame buffer failed because of some invalid argument
 *       - ESP_FAIL: transmit frame buffer failed because some other error occurred
 */
-esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length);
+esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length, int64_t *timestamp);
 
 /**
 * @brief General Receive is deprecated and shall not be accessed from app code,

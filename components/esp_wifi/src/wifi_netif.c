@@ -36,13 +36,13 @@ static esp_netif_t *s_wifi_netifs[MAX_WIFI_IFS] = { NULL };
  */
 static esp_err_t wifi_sta_receive(void *buffer, uint16_t len, void *eb)
 {
-    return s_wifi_rxcbs[WIFI_IF_STA](s_wifi_netifs[WIFI_IF_STA], buffer, len, eb);
+    return s_wifi_rxcbs[WIFI_IF_STA](s_wifi_netifs[WIFI_IF_STA], buffer, len, eb, 0);
 }
 
 #ifdef CONFIG_ESP_WIFI_SOFTAP_SUPPORT
 static esp_err_t wifi_ap_receive(void *buffer, uint16_t len, void *eb)
 {
-    return s_wifi_rxcbs[WIFI_IF_AP](s_wifi_netifs[WIFI_IF_AP], buffer, len, eb);
+    return s_wifi_rxcbs[WIFI_IF_AP](s_wifi_netifs[WIFI_IF_AP], buffer, len, eb, 0);
 }
 #endif
 
@@ -51,13 +51,13 @@ static void wifi_free(void *h, void* buffer)
     esp_wifi_internal_free_rx_buffer(buffer);
 }
 
-static esp_err_t wifi_transmit(void *h, void *buffer, size_t len)
+static esp_err_t wifi_transmit(void *h, void *buffer, size_t len, int64_t *timestamp)
 {
     wifi_netif_driver_t driver = h;
     return esp_wifi_internal_tx(driver->wifi_if, buffer, len);
 }
 
-static esp_err_t wifi_transmit_wrap(void *h, void *buffer, size_t len, void *netstack_buf)
+static esp_err_t wifi_transmit_wrap(void *h, void *buffer, size_t len, void *netstack_buf, int64_t *timestamp)
 {
     wifi_netif_driver_t driver = h;
 #if (CONFIG_ESP32_SPIRAM_SUPPORT || CONFIG_ESP32S2_SPIRAM_SUPPORT || CONFIG_ESP32S3_SPIRAM_SUPPORT)

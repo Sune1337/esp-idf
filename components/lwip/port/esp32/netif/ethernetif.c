@@ -153,7 +153,7 @@ static err_t ethernet_low_level_output(struct netif *netif, struct pbuf *p)
  * @param buffer ethernet buffer
  * @param len length of buffer
  */
-void ethernetif_input(void *h, void *buffer, size_t len, void *eb)
+void ethernetif_input(void *h, void *buffer, size_t len, void *eb, int64_t timestamp)
 {
     struct netif *netif = h;
     struct pbuf *p;
@@ -171,6 +171,7 @@ void ethernetif_input(void *h, void *buffer, size_t len, void *eb)
         ethernet_free_rx_buf_l2(netif, buffer);
         return;
     }
+    p->timestamp = timestamp;
     p->payload = buffer;
 #if ESP_LWIP
     p->l2_owner = netif;

@@ -108,7 +108,7 @@ struct esp_eth_mac_s {
     *      - ESP_FAIL: transmit packet failed because some other error occurred
     *
     */
-    esp_err_t (*transmit)(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length);
+    esp_err_t (*transmit)(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp);
 
     /**
     * @brief Receive packet from Ethernet MAC

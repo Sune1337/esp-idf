@@ -299,7 +299,7 @@ err:
     return ret;
 }
 
-static esp_err_t emac_ksz8851snl_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length)
+static esp_err_t emac_ksz8851snl_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     static unsigned s_frame_id = 0U;
 
@@ -638,7 +638,7 @@ static void emac_ksz8851snl_task(void *arg)
                 }
 
                 if (emac->parent.receive(&emac->parent, packet, &length) == ESP_OK && length) {
-                    emac->eth->stack_input(emac->eth, packet, length);
+                    emac->eth->stack_input(emac->eth, packet, length, 0);
                     // NOTE(v.chistyakov): the packet is freed in the upper layers
                 } else {
                     free(packet);

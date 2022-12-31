@@ -47,7 +47,7 @@ typedef struct {
     atomic_int ref_count;
     void *priv;
     _Atomic esp_eth_fsm_t fsm;
-    esp_err_t (*stack_input)(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv);
+    esp_err_t (*stack_input)(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv, int64_t timestamp);
     esp_err_t (*on_lowlevel_init_done)(esp_eth_handle_t eth_handle);
     esp_err_t (*on_lowlevel_deinit_done)(esp_eth_handle_t eth_handle);
     esp_err_t (*customized_read_phy_reg)(esp_eth_handle_t eth_handle, uint32_t phy_addr, uint32_t phy_reg, uint32_t *reg_value);
@@ -87,11 +87,11 @@ static esp_err_t eth_phy_reg_write(esp_eth_mediator_t *eth, uint32_t phy_addr, u
     return mac->write_phy_reg(mac, phy_addr, phy_reg, reg_value);
 }
 
-static esp_err_t eth_stack_input(esp_eth_mediator_t *eth, uint8_t *buffer, uint32_t length)
+static esp_err_t eth_stack_input(esp_eth_mediator_t *eth, uint8_t *buffer, uint32_t length, int64_t timestamp)
 {
     esp_eth_driver_t *eth_driver = __containerof(eth, esp_eth_driver_t, mediator);
     if (eth_driver->stack_input) {
-        return eth_driver->stack_input((esp_eth_handle_t)eth_driver, buffer, length, eth_driver->priv);
+        return eth_driver->stack_input((esp_eth_handle_t)eth_driver, buffer, length, eth_driver->priv, timestamp);
     }
     // No stack input path has been installed, just drop the incoming packets
     free(buffer);
@@ -296,7 +296,7 @@ err:
 
 esp_err_t esp_eth_update_input_path(
     esp_eth_handle_t hdl,
-    esp_err_t (*stack_input)(esp_eth_handle_t hdl, uint8_t *buffer, uint32_t length, void *priv),
+    esp_err_t (*stack_input)(esp_eth_handle_t hdl, uint8_t *buffer, uint32_t length, void *priv, int64_t timestamp),
     void *priv)
 {
     esp_err_t ret = ESP_OK;
@@ -308,7 +308,7 @@ err:
     return ret;
 }
 
-esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length)
+esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length, int64_t *timestamp)
 {
     esp_err_t ret = ESP_OK;
     esp_eth_driver_t *eth_driver = (esp_eth_driver_t *)hdl;
@@ -323,7 +323,7 @@ esp_err_t esp_eth_transmit(esp_eth_handle_t hdl, void *buf, size_t length)
     ESP_GOTO_ON_FALSE(length, ESP_ERR_INVALID_ARG, err, TAG, "buf length can't be zero");
     ESP_GOTO_ON_FALSE(eth_driver, ESP_ERR_INVALID_ARG, err, TAG, "ethernet driver handle can't be null");
     esp_eth_mac_t *mac = eth_driver->mac;
-    ret = mac->transmit(mac, buf, length);
+    ret = mac->transmit(mac, buf, length, timestamp);
 err:
     return ret;
 }

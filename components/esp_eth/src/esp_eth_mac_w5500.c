@@ -339,7 +339,7 @@ static void emac_w5500_task(void *arg)
                 } else if (emac->parent.receive(&emac->parent, buffer, &length) == ESP_OK) {
                     /* pass the buffer to stack (e.g. TCP/IP layer) */
                     if (length) {
-                        emac->eth->stack_input(emac->eth, buffer, length);
+                        emac->eth->stack_input(emac->eth, buffer, length, 0);
                     } else {
                         free(buffer);
                     }
@@ -511,7 +511,7 @@ static inline bool is_w5500_sane_for_rxtx(emac_w5500_t *emac)
    return false;
 }
 
-static esp_err_t emac_w5500_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length)
+static esp_err_t emac_w5500_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     esp_err_t ret = ESP_OK;
     emac_w5500_t *emac = __containerof(mac, emac_w5500_t, parent);

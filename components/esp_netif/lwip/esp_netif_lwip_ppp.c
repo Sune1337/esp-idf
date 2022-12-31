@@ -314,7 +314,7 @@ esp_err_t esp_netif_start_ppp(esp_netif_t *esp_netif)
     return ESP_OK;
 }
 
-void esp_netif_lwip_ppp_input(void *ppp_ctx, void *buffer, size_t len, void *eb)
+void esp_netif_lwip_ppp_input(void *ppp_ctx, void *buffer, size_t len, void *eb, int64_t timestamp)
 {
     struct lwip_peer2peer_ctx * obj = ppp_ctx;
     err_t ret = pppos_input_tcpip(obj->ppp, buffer, len);

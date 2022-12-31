@@ -279,7 +279,7 @@ esp_err_t esp_netif_transmit(esp_netif_t *esp_netif, void* data, size_t len)
     return (esp_netif->driver_transmit)(esp_netif->driver_handle, data, len);
 }
 
-esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb)
+esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb, int64_t timestamp)
 {
     ESP_LOGV(TAG, "Received data: ptr:%p, size:%d", buffer, len);
     esp_netif_transmit(esp_netif, buffer, len);

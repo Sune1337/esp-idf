@@ -24,7 +24,7 @@ extern "C" {
 
 err_t ethernetif_init(struct netif *netif);
 
-void ethernetif_input(void *netif, void *buffer, size_t len, void *eb);
+void ethernetif_input(void *netif, void *buffer, size_t len, void *eb, int64_t timestamp);
 
 void netif_reg_addr_change_cb(void* cb);
 

@@ -144,7 +144,7 @@ struct esp_eth_mediator_s {
     *       - ESP_FAIL: deliver packet failed because some error occurred
     *
     */
-    esp_err_t (*stack_input)(esp_eth_mediator_t *eth, uint8_t *buffer, uint32_t length);
+    esp_err_t (*stack_input)(esp_eth_mediator_t *eth, uint8_t *buffer, uint32_t length, int64_t timestamp);
 
     /**
     * @brief Callback on Ethernet state changed

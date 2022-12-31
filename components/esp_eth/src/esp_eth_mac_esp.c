@@ -221,11 +221,11 @@ static esp_err_t emac_esp32_set_peer_pause_ability(esp_eth_mac_t *mac, uint32_t 
     return ESP_OK;
 }
 
-static esp_err_t emac_esp32_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length)
+static esp_err_t emac_esp32_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     esp_err_t ret = ESP_OK;
     emac_esp32_t *emac = __containerof(mac, emac_esp32_t, parent);
-    uint32_t sent_len = emac_hal_transmit_frame(&emac->hal, buf, length);
+    uint32_t sent_len = emac_hal_transmit_frame(&emac->hal, buf, length, timestamp);
     ESP_GOTO_ON_FALSE(sent_len == length, ESP_ERR_NO_MEM, err, TAG, "insufficient TX buffer size");
     return ESP_OK;
 err:
@@ -249,6 +249,8 @@ err:
     return ret;
 }
 
+int64_t rx_timestamp = 0;
+
 static void emac_esp32_rx_task(void *arg)
 {
     emac_esp32_t *emac = (emac_esp32_t *)arg;
@@ -257,6 +259,10 @@ static void emac_esp32_rx_task(void *arg)
     while (1) {
         // block indefinitely until got notification from underlay event
         ulTaskNotifyTake(pdTRUE, portMAX_DELAY);
+        
+        int64_t now = rx_timestamp;
+        // int64_t now = esp_timer_get_time();
+
         do {
             length = ETH_MAX_PACKET_SIZE;
             buffer = malloc(length);
@@ -265,7 +271,7 @@ static void emac_esp32_rx_task(void *arg)
             } else if (emac_esp32_receive(&emac->parent, buffer, &length) == ESP_OK) {
                 /* pass the buffer to stack (e.g. TCP/IP layer) */
                 if (length) {
-                    emac->eth->stack_input(emac->eth, buffer, length);
+                    emac->eth->stack_input(emac->eth, buffer, length, now);
                 } else {
                     free(buffer);
                 }
@@ -415,6 +421,7 @@ static esp_err_t emac_esp32_del(esp_eth_mac_t *mac)
 // To achieve a better performance, we put the ISR always in IRAM
 IRAM_ATTR void emac_isr_default_handler(void *args)
 {
+    rx_timestamp = esp_timer_get_time();
     emac_hal_context_t *hal = (emac_hal_context_t *)args;
     emac_esp32_t *emac = __containerof(hal, emac_esp32_t, hal);
     BaseType_t high_task_wakeup = pdFALSE;

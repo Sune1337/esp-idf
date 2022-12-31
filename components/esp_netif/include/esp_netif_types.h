@@ -195,8 +195,8 @@ typedef struct esp_netif_driver_base_s {
  */
 struct esp_netif_driver_ifconfig {
     esp_netif_iodriver_handle handle;
-    esp_err_t (*transmit)(void *h, void *buffer, size_t len);
-    esp_err_t (*transmit_wrap)(void *h, void *buffer, size_t len, void *netstack_buffer);
+    esp_err_t (*transmit)(void *h, void *buffer, size_t len, int64_t *timestamp);
+    esp_err_t (*transmit_wrap)(void *h, void *buffer, size_t len, void *netstack_buffer, int64_t *timestamp);
     void (*driver_free_rx_buffer)(void *h, void* buffer);
 };
 
@@ -220,7 +220,7 @@ struct esp_netif_config {
 /**
  * @brief  ESP-NETIF Receive function type
  */
-typedef esp_err_t (*esp_netif_receive_t)(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb);
+typedef esp_err_t (*esp_netif_receive_t)(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb, int64_t timestamp);
 
 #ifdef __cplusplus
 }

@@ -873,17 +873,17 @@ void esp_netif_free_rx_buffer(void *h, void* buffer)
 
 esp_err_t esp_netif_transmit(esp_netif_t *esp_netif, void* data, size_t len)
 {
-    return (esp_netif->driver_transmit)(esp_netif->driver_handle, data, len);
+    return (esp_netif->driver_transmit)(esp_netif->driver_handle, data, len, 0);
 }
 
 esp_err_t esp_netif_transmit_wrap(esp_netif_t *esp_netif, void *data, size_t len, void *pbuf)
 {
-    return (esp_netif->driver_transmit_wrap)(esp_netif->driver_handle, data, len, pbuf);
+    return (esp_netif->driver_transmit_wrap)(esp_netif->driver_handle, data, len, pbuf, 0);
 }
 
-esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb)
+esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb, int64_t timestamp)
 {
-    esp_netif->lwip_input_fn(esp_netif->netif_handle, buffer, len, eb);
+    esp_netif->lwip_input_fn(esp_netif->netif_handle, buffer, len, eb, timestamp);
     return ESP_OK;
 }
 

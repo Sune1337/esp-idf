@@ -158,7 +158,7 @@ esp_err_t esp_netif_attach(esp_netif_t *esp_netif, esp_netif_iodriver_handle dri
  * @return
  *         - ESP_OK
  */
-esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb);
+esp_err_t esp_netif_receive(esp_netif_t *esp_netif, void *buffer, size_t len, void *eb, int64_t timestamp);
 
 /**
  * @}

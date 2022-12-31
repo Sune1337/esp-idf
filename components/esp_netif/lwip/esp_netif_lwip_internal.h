@@ -23,17 +23,17 @@
 
 struct esp_netif_netstack_lwip_vanilla_config {
     err_t (*init_fn)(struct netif*);
-    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb);
+    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb, int64_t timestamp);
 };
 
 struct esp_netif_netstack_lwip_ppp_config {
-    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb);
+    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb, int64_t timestamp);
     esp_netif_ppp_config_t ppp_events;
 };
 
 struct esp_netif_netstack_lwip_slip_config {
     err_t (*init_fn)(struct netif*);
-    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb);
+    void (*input_fn)(void *netif, void *buffer, size_t len, void *eb, int64_t timestamp);
     esp_netif_slip_config_t slip_config;
 };
 
@@ -106,14 +106,14 @@ struct esp_netif_obj {
     // lwip netif related
     struct netif *lwip_netif;
     err_t (*lwip_init_fn)(struct netif*);
-    void (*lwip_input_fn)(void *input_netif_handle, void *buffer, size_t len, void *eb);
+    void (*lwip_input_fn)(void *input_netif_handle, void *buffer, size_t len, void *eb, int64_t timestamp);
     void * netif_handle;    // netif impl context (either vanilla lwip-netif or ppp_pcb)
     netif_related_data_t *related_data; // holds additional data for specific netifs
 
     // io driver related
     void* driver_handle;
-    esp_err_t (*driver_transmit)(void *h, void *buffer, size_t len);
-    esp_err_t (*driver_transmit_wrap)(void *h, void *buffer, size_t len, void *pbuf);
+    esp_err_t (*driver_transmit)(void *h, void *buffer, size_t len, int64_t *timestamp);
+    esp_err_t (*driver_transmit_wrap)(void *h, void *buffer, size_t len, void *pbuf, int64_t *timestamp);
     void (*driver_free_rx_buffer)(void *h, void* buffer);
 
     // dhcp related

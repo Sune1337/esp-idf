@@ -35,9 +35,9 @@ struct esp_eth_netif_glue_t {
 
 bool s_netif_glue_legacy_events_registered = false;
 
-static esp_err_t eth_input_to_netif(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv)
+static esp_err_t eth_input_to_netif(esp_eth_handle_t eth_handle, uint8_t *buffer, uint32_t length, void *priv, int64_t timestamp)
 {
-    return esp_netif_receive((esp_netif_t *)priv, buffer, length, NULL);
+    return esp_netif_receive((esp_netif_t *)priv, buffer, length, NULL, timestamp);
 }
 
 static esp_err_t esp_eth_post_attach(esp_netif_t *esp_netif, void *args)

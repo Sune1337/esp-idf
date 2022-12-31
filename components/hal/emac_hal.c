@@ -6,6 +6,7 @@
 #include <string.h>
 #include "sdkconfig.h"
 #include "esp_attr.h"
+#include "esp_timer.h"
 #include "hal/emac_hal.h"
 #include "hal/emac_ll.h"
 #include "hal/gpio_ll.h"
@@ -386,7 +387,7 @@ uint32_t emac_hal_get_tx_desc_owner(emac_hal_context_t *hal)
     return hal->tx_desc->TDES0.Own;
 }
 
-uint32_t emac_hal_transmit_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t length)
+uint32_t emac_hal_transmit_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
     /* Get the number of Tx buffers to use for the frame */
     uint32_t bufcount = 0;
@@ -445,6 +446,11 @@ uint32_t emac_hal_transmit_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t
         hal->tx_desc = (eth_dma_tx_descriptor_t *)(hal->tx_desc->Buffer2NextDescAddr);
     }
     emac_ll_transmit_poll_demand(hal->dma_regs, 0);
+
+    if (timestamp != 0) {
+        *timestamp = esp_timer_get_time();
+    }
+
     return sentout;
 err:
     return 0;

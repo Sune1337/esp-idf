@@ -232,7 +232,7 @@ esp_err_t emac_hal_stop(emac_hal_context_t *hal);
 
 uint32_t emac_hal_get_tx_desc_owner(emac_hal_context_t *hal);
 
-uint32_t emac_hal_transmit_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t length);
+uint32_t emac_hal_transmit_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t length, int64_t *timestamp);
 
 uint32_t emac_hal_receive_frame(emac_hal_context_t *hal, uint8_t *buf, uint32_t size, uint32_t *frames_remain, uint32_t *free_desc);
 

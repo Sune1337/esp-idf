@@ -50,7 +50,7 @@ esp_err_t esp_netif_start_ppp(esp_netif_t *esp_netif);
  * @return
  *         - ESP_OK on success
  */
-void esp_netif_lwip_ppp_input(void *ppp, void *buffer, size_t len, void *eb);
+void esp_netif_lwip_ppp_input(void *ppp, void *buffer, size_t len, void *eb, int64_t timestamp);
 
 /**
  * @brief   Destroys the ppp netif object
