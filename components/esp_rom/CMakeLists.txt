@@ -11,12 +11,14 @@ if(target STREQUAL "linux")
                         "${target}/esp_rom_crc.c"
                         "${target}/esp_rom_md5.c"
                         "${target}/esp_rom_efuse.c")
+    list(APPEND include_dirs "${IDF_PATH}/tools/mocks/soc/include")
 else()
     list(APPEND include_dirs "${target}")
     list(APPEND sources "patches/esp_rom_crc.c"
                         "patches/esp_rom_sys.c"
                         "patches/esp_rom_uart.c"
-                        "patches/esp_rom_tjpgd.c")
+                        "patches/esp_rom_tjpgd.c"
+                        "patches/esp_rom_efuse.c")
     list(APPEND private_required_comp soc hal)
 endif()
 
@@ -152,7 +154,7 @@ else() # Regular app build
             rom_linker_script("newlib-time")
         endif()
 
-        if(CONFIG_ESP32C3_REV_MIN_3)
+        if(CONFIG_ESP32C3_REV_MIN_3 OR CONFIG_ESP32C3_REV_MIN_4)
             rom_linker_script("eco3")
         endif()
 

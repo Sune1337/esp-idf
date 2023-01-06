@@ -244,6 +244,17 @@ menu "ESP32S3-Specific"
                 If SPIRAM_FETCH_INSTRUCTIONS is also enabled,
                 you can run the instruction when erasing or programming the flash.
 
+        config SPIRAM_ALLOW_STACK_EXTERNAL_MEMORY
+            bool "Allow external memory as an argument to xTaskCreateStatic"
+            default n
+            help
+                Accessing memory in SPIRAM has certain restrictions, so task stacks allocated by xTaskCreate
+                are by default allocated from internal RAM.
+
+                This option allows for passing memory allocated from SPIRAM to be passed to xTaskCreateStatic.
+                This should only be used for tasks where the stack is never accessed while the cache is disabled.
+                Cannot be used together with ESP_COREDUMP_ENABLE_TO_FLASH.
+
         choice SPIRAM_SPEED
             prompt "Set RAM clock speed"
             default SPIRAM_SPEED_40M
@@ -319,6 +330,13 @@ menu "ESP32S3-Specific"
             Bytes of memory to reserve for ULP coprocessor firmware & data.
 
             Data is reserved at the beginning of RTC slow memory.
+
+    config ESP32S3_ULP_COPROC_RISCV
+        bool "Enable RISC-V as ULP coprocessor"
+        depends on ESP32S3_ULP_COPROC_ENABLED
+        default n
+        help
+            Set this to y to use the RISC-V coprocessor instead of the FSM-ULP.
 
     config ESP32S3_DEBUG_OCDAWARE
         bool "Make exception and panic handlers JTAG/OCD aware"
