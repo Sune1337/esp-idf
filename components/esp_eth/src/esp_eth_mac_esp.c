@@ -221,11 +221,16 @@ static esp_err_t emac_esp32_set_peer_pause_ability(esp_eth_mac_t *mac, uint32_t 
     return ESP_OK;
 }
 
+static portMUX_TYPE tx_mutex = portMUX_INITIALIZER_UNLOCKED;
+
 static esp_err_t emac_esp32_transmit(esp_eth_mac_t *mac, uint8_t *buf, uint32_t length, int64_t *timestamp)
 {
+    portENTER_CRITICAL(&tx_mutex);
+
     esp_err_t ret = ESP_OK;
     emac_esp32_t *emac = __containerof(mac, emac_esp32_t, parent);
     uint32_t sent_len = emac_hal_transmit_frame(&emac->hal, buf, length, timestamp);
+    portEXIT_CRITICAL(&tx_mutex);
     ESP_GOTO_ON_FALSE(sent_len == length, ESP_ERR_NO_MEM, err, TAG, "insufficient TX buffer size");
     return ESP_OK;
 err:
